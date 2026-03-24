@@ -1,0 +1,1176 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <title>宋哲龙 - Song Zhelong</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Vue 3 -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Fonts (keep your original taste, but used subtly) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;600&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            script: ['"Great Vibes"', 'cursive'],
+            display: ['"Playfair Display"', 'serif'],
+            elegant: ['"Cormorant Garamond"', 'serif'],
+            ui: ['ui-sans-serif','system-ui','Inter','Segoe UI','PingFang SC','Microsoft YaHei','sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root{
+      --bg:#050505;
+      --fg:#F0F0F0;
+      --muted: rgba(240,240,240,.68);
+      --muted2: rgba(240,240,240,.46);
+      --accent:#CCFF00;
+      --glass: rgba(255,255,255,.06);
+      --border: rgba(255,255,255,.12);
+      --border2: rgba(255,255,255,.18);
+      --shadow: 0 26px 90px rgba(0,0,0,.55);
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Inter, PingFang SC, Microsoft YaHei, sans-serif;
+      overflow-x:hidden;
+      cursor:none;
+    }
+
+    /* ===== Liquid void background ===== */
+    #voidCanvas{
+      position:fixed; inset:0;
+      width:100%; height:100%;
+      z-index:-3;
+      filter: blur(18px) saturate(1.15) contrast(1.05);
+      opacity: .95;
+    }
+    .grid-overlay{
+      pointer-events:none;
+      position:fixed; inset:0;
+      z-index:-2;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 58px 58px;
+      opacity:.07;
+      mask-image: radial-gradient(closest-side, rgba(0,0,0,0.0), rgba(0,0,0,1));
+      -webkit-mask-image: radial-gradient(closest-side, rgba(0,0,0,0.0), rgba(0,0,0,1));
+    }
+    .noise{
+      pointer-events:none;
+      position:fixed; inset:0;
+      z-index:-1;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+      mix-blend-mode:overlay;
+      opacity:.10;
+    }
+
+    /* ===== Glass system ===== */
+    .glass{
+      background: linear-gradient(180deg, rgba(255,255,255,0.085), rgba(255,255,255,0.035));
+      border: 1px solid var(--border);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+    }
+    .glass-lite{
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .hairline{
+      height:1px; width:100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.22), rgba(255,255,255,0));
+      opacity:.65;
+    }
+
+    /* ===== Cursor + magnetic ===== */
+    .cursor{
+      position:fixed; left:0; top:0;
+      width:14px; height:14px;
+      border-radius:999px;
+      background: rgba(240,240,240,0.95);
+      mix-blend-mode:difference;
+      pointer-events:none;
+      z-index:9999;
+      transform: translate(-50%,-50%);
+    }
+    .cursorRing{
+      position:fixed; left:0; top:0;
+      width:56px; height:56px;
+      border-radius:999px;
+      border:1px solid rgba(240,240,240,0.55);
+      mix-blend-mode:difference;
+      pointer-events:none;
+      z-index:9998;
+      transform: translate(-50%,-50%);
+      opacity:.9;
+    }
+    .magnetic{ display:inline-flex; align-items:center; gap:.55rem; will-change:transform; }
+
+    /* ===== Hero typography ===== */
+    .heroZh{
+      font-family: "Playfair Display", serif;
+      letter-spacing: -0.04em;
+      text-shadow:
+        0 0 14px rgba(204,255,0,0.10),
+        0 0 70px rgba(204,255,0,0.08),
+        0 0 140px rgba(204,255,0,0.06);
+    }
+    .heroEn{
+      font-family: "Cormorant Garamond", serif;
+      letter-spacing: .32em;
+      text-transform: uppercase;
+      color: rgba(240,240,240,.62);
+    }
+
+    /* ===== Drag affordance ===== */
+    .drag-hint{
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      font-size:.75rem;
+      color: rgba(240,240,240,.55);
+      user-select:none;
+    }
+    .draggable{
+      touch-action:none;
+      user-select:none;
+      will-change:transform;
+    }
+    .dragging{
+      cursor:grabbing !important;
+      transform: translate3d(var(--dx,0px), var(--dy,0px), 0px) scale(1.02);
+      border-color: rgba(204,255,0,.45) !important;
+      box-shadow: 0 30px 90px rgba(0,0,0,.65);
+    }
+
+    /* ===== Experience timeline hover dim ===== */
+    .tl-item{ transition: opacity .22s ease, transform .22s ease, filter .22s ease, border-color .22s ease; }
+    .tl-item.is-dim{ opacity:.26; filter:saturate(.7); }
+    .tl-dot{
+      width:10px; height:10px; border-radius:999px;
+      background: rgba(240,240,240,.9);
+      box-shadow: 0 0 0 7px rgba(204,255,0,0.06);
+      flex-shrink:0;
+      margin-top:.55rem;
+    }
+
+    /* ===== Marquee ===== */
+    .marquee{
+      mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+      -webkit-mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+    }
+    .marquee-track{
+      display:flex;
+      gap:1.1rem;
+      width:max-content;
+      will-change: transform;
+      animation: marquee 18s linear infinite;
+    }
+    .marquee:hover .marquee-track{ animation-play-state:paused; }
+    @keyframes marquee{
+      from{ transform: translateX(0); }
+      to{ transform: translateX(-50%); }
+    }
+
+    /* ===== Portfolio drag sort ===== */
+    .gallery{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: .9rem;
+    }
+    @media (max-width: 768px){
+      .gallery{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    .tile{
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      position:relative;
+      aspect-ratio: 1 / 1;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, opacity .18s ease;
+    }
+    .tile:hover{ border-color: rgba(255,255,255,0.22); transform: translateY(-2px); }
+    .tile.drag-over{ outline: 2px solid rgba(204,255,0,.45); }
+    .tile img{ width:100%; height:100%; object-fit:cover; }
+    .chip-btn{
+      position:absolute; top:10px; right:10px;
+      width:34px; height:34px;
+      border-radius:999px;
+      background: rgba(0,0,0,0.35);
+      border:1px solid rgba(255,255,255,0.18);
+      display:flex; align-items:center; justify-content:center;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .chip-btn:hover{ background: rgba(0,0,0,0.55); }
+    .uploadTile{
+      border:1px dashed rgba(255,255,255,0.20);
+      background: rgba(255,255,255,0.04);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:.35rem;
+      color: rgba(240,240,240,.72);
+    }
+    .uploadTile:hover{ border-color: rgba(204,255,0,.45); }
+
+    /* ===== Lightbox ===== */
+    .lightbox{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,0.86);
+      display:flex; align-items:center; justify-content:center;
+      z-index: 2000;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .22s ease;
+    }
+    .lightbox.active{ opacity:1; pointer-events:auto; }
+    .lightbox img{
+      max-width: min(92vw, 1100px);
+      max-height: 78vh;
+      border-radius: 18px;
+      box-shadow: 0 40px 120px rgba(0,0,0,.65);
+      transform: scale(.98);
+      transition: transform .22s ease;
+    }
+    .lightbox.active img{ transform: scale(1); }
+
+    /* Mobile: allow scrolling sections */
+    html{ scroll-behavior:smooth; }
+  </style>
+</head>
+
+<body>
+  <canvas id="voidCanvas"></canvas>
+  <div class="grid-overlay"></div>
+  <div class="noise"></div>
+
+  <!-- Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursorRing" id="cursorRing"></div>
+
+  <div id="app" class="relative">
+    <!-- Top Nav -->
+    <header class="mx-auto max-w-6xl px-6 pt-6">
+      <div class="glass rounded-2xl px-5 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="w-2.5 h-2.5 rounded-full" :style="{ background: profileData.theme.accent }"></span>
+          <div class="text-sm opacity-80 tracking-wide">
+            <span class="opacity-60">/</span>
+            <span class="ml-2">{{ profileData.hero.subtitle }}</span>
+          </div>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-5 text-sm">
+          <a class="magnetic opacity-80 hover:opacity-100 transition" href="#about">About</a>
+          <a class="magnetic opacity-80 hover:opacity-100 transition" href="#experience">Experience</a>
+          <a class="magnetic opacity-80 hover:opacity-100 transition" href="#honors">Honors</a>
+          <a class="magnetic opacity-80 hover:opacity-100 transition" href="#portfolio">Portfolio</a>
+          <a class="magnetic px-3 py-1.5 rounded-xl border border-white/15 hover:border-white/30 transition"
+             href="#contact">
+            Contact <span class="inline-block w-1.5 h-1.5 rounded-full" :style="{ background: profileData.theme.accent }"></span>
+          </a>
+        </nav>
+
+        <a class="md:hidden magnetic px-3 py-1.5 rounded-xl border border-white/15 hover:border-white/30 transition text-sm"
+           href="#contact">
+          Contact
+        </a>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-6xl px-6">
+      <!-- HERO -->
+      <section id="home" class="pt-20 pb-14">
+        <div class="relative">
+          <div class="absolute -inset-6 rounded-[2.25rem] blur-2xl opacity-30"
+               :style="{ background: 'radial-gradient(circle at 30% 20%, ' + profileData.theme.accent + '33, transparent 55%), radial-gradient(circle at 70% 80%, rgba(255,255,255,0.10), transparent 60%)' }">
+          </div>
+
+          <div class="glass rounded-[2.25rem] p-9 md:p-14 relative overflow-hidden">
+            <div class="flex flex-col md:flex-row gap-10 md:items-start md:justify-between">
+              <!-- Avatar + Name -->
+              <div class="min-w-[260px]">
+                <div class="flex items-center gap-5">
+                  <div class="relative">
+                    <button class="draggable rounded-2xl border border-white/15 glass-lite p-2"
+                            @click="triggerAvatarUpload"
+                            ref="avatarWrap"
+                            data-draggable="avatar">
+                      <div class="w-24 h-24 rounded-2xl overflow-hidden border border-white/15 bg-white/5">
+                        <img v-if="avatarUrl" :src="avatarUrl" class="w-full h-full object-cover" alt="avatar">
+                        <div v-else class="w-full h-full grid place-items-center text-white/60">
+                          <i data-lucide="user" class="w-7 h-7"></i>
+                        </div>
+                      </div>
+                      <div class="mt-2 text-[11px] text-white/55 flex items-center justify-center gap-1.5">
+                        <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                        点击上传
+                      </div>
+                    </button>
+                    <input ref="avatarInput" type="file" accept="image/*" class="hidden" @change="handleAvatarChange">
+                  </div>
+
+                  <div>
+                    <div class="text-xs tracking-[0.22em] uppercase text-white/60">{{ profileData.hero.kicker }}</div>
+                    <h1 class="heroZh text-[clamp(2.6rem,6.2vw,5.6rem)] leading-[0.95] mt-2">
+                      <span class="heroIn">{{ profileData.hero.nameZh }}</span>
+                    </h1>
+                    <div class="heroEn text-sm md:text-base mt-3">{{ profileData.hero.nameEn }}</div>
+                  </div>
+                </div>
+
+                <p class="mt-6 text-white/70 leading-relaxed heroIn">
+                  {{ profileData.hero.desc }}
+                </p>
+
+                <div class="mt-6 flex flex-wrap gap-3">
+                  <a class="magnetic px-4 py-2.5 rounded-xl border border-white/15 hover:border-white/30 transition text-sm"
+                     :href="'mailto:' + profileData.contact.email">
+                    <i data-lucide="mail" class="w-4 h-4"></i>
+                    Email
+                  </a>
+                  <a class="magnetic px-4 py-2.5 rounded-xl border border-white/15 hover:border-white/30 transition text-sm"
+                     href="#portfolio">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    Portfolio
+                  </a>
+                  <a class="magnetic px-4 py-2.5 rounded-xl text-sm font-medium"
+                     :style="{ background: profileData.theme.accent, color: '#050505' }"
+                     href="#experience">
+                    <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                    View Experience
+                  </a>
+                </div>
+
+                <div class="mt-5 drag-hint">
+                  <i data-lucide="hand" class="w-4 h-4"></i>
+                  拖拽：头像块 / About 卡片 / Portfolio 图片排序
+                </div>
+              </div>
+
+              <!-- Quick facts -->
+              <div class="flex-1 min-w-[260px]">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="glass-lite rounded-2xl p-5 border border-white/10">
+                    <div class="text-xs tracking-[0.22em] uppercase text-white/55">Education</div>
+                    <div class="mt-2 text-xl font-display">{{ profileData.about.education.school }}</div>
+                    <div class="mt-1 text-sm text-white/60">{{ profileData.about.education.degree }}</div>
+                  </div>
+
+                  <div class="glass-lite rounded-2xl p-5 border border-white/10">
+                    <div class="text-xs tracking-[0.22em] uppercase text-white/55">Focus</div>
+                    <div class="mt-2 text-xl font-display">{{ profileData.about.focus1 }}</div>
+                    <div class="mt-1 text-sm text-white/60">{{ profileData.about.focus2 }}</div>
+                  </div>
+
+                  <div class="glass-lite rounded-2xl p-5 border border-white/10 md:col-span-2">
+                    <div class="text-xs tracking-[0.22em] uppercase text-white/55">Keywords</div>
+                    <div class="mt-3 flex flex-wrap gap-2">
+                      <span v-for="(k,i) in profileData.skills.keywords" :key="i"
+                            class="px-3 py-1.5 rounded-xl border border-white/15 text-sm text-white/80">
+                        <span class="inline-block w-1.5 h-1.5 rounded-full mr-2 align-middle" :style="{ background: profileData.theme.accent }"></span>
+                        {{ k }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-7 hairline"></div>
+
+                <div class="mt-6 text-sm text-white/60 leading-relaxed">
+                  <div class="flex flex-wrap gap-4">
+                    <span class="text-white/45">Contact:</span>
+                    <span class="magnetic">{{ profileData.contact.email }}</span>
+                    <span class="text-white/45">·</span>
+                    <span class="magnetic">{{ profileData.contact.phone }}</span>
+                  </div>
+                  <div class="mt-2">
+                    <span class="text-white/45">Location:</span>
+                    <span class="ml-2">{{ profileData.contact.location }}</span>
+                    <span class="text-white/45 ml-2">·</span>
+                    <span class="ml-2">Birth: {{ profileData.contact.birth }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="absolute -right-28 -bottom-28 w-[560px] h-[560px] rounded-full blur-3xl opacity-20"
+                 :style="{ background: 'radial-gradient(circle, ' + profileData.theme.accent + '55, transparent 60%)' }"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT (Bento + draggable cards) -->
+      <section id="about" class="py-14">
+        <div class="flex items-end justify-between gap-6 flex-wrap">
+          <div>
+            <div class="text-xs tracking-[0.22em] uppercase text-white/60">About</div>
+            <h2 class="text-3xl md:text-4xl font-display mt-2">Bento grid. Drag to play.</h2>
+          </div>
+          <div class="text-sm text-white/55 max-w-xl">
+            这里是信息层级最重要的区域：你可以拖拽卡片（有回弹），不改内容但更像作品集。
+          </div>
+        </div>
+
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-12 gap-4 relative">
+          <!-- Bio -->
+          <div class="glass rounded-2xl p-6 md:col-span-7 border border-white/10 draggable"
+               ref="bentoBio"
+               data-draggable="bento">
+            <div class="text-xs tracking-[0.22em] uppercase text-white/55">Bio</div>
+            <p class="mt-3 text-base md:text-lg leading-relaxed text-white/75 font-elegant">
+              {{ profileData.about.bio }}
+            </p>
+          </div>
+
+          <!-- Highlights -->
+          <div class="glass rounded-2xl p-6 md:col-span-5 border border-white/10 draggable"
+               ref="bentoHighlights"
+               data-draggable="bento">
+            <div class="text-xs tracking-[0.22em] uppercase text-white/55">Highlights</div>
+            <ul class="mt-3 space-y-2 text-sm md:text-base text-white/78">
+              <li v-for="(h,i) in profileData.about.highlights" :key="i" class="flex gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full" :style="{ background: profileData.theme.accent }"></span>
+                <span>{{ h }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Cards -->
+          <div class="glass-lite rounded-2xl p-6 md:col-span-4 border border-white/10 draggable"
+               ref="bentoEdu"
+               data-draggable="bento">
+            <div class="text-xs tracking-[0.22em] uppercase text-white/55">Education</div>
+            <div class="mt-2 text-xl font-display text-white/90">{{ profileData.about.education.school }}</div>
+            <div class="mt-2 text-sm text-white/60">{{ profileData.about.education.degree }}</div>
+            <div class="mt-2 text-sm text-white/60">{{ profileData.about.education.note }}</div>
+          </div>
+
+          <div class="glass-lite rounded-2xl p-6 md:col-span-4 border border-white/10 draggable"
+               ref="bentoAdvisor"
+               data-draggable="bento">
+            <div class="text-xs tracking-[0.22em] uppercase text-white/55">Supervisor</div>
+            <div class="mt-2 text-xl font-display text-white/90">{{ profileData.about.supervisor }}</div>
+            <div class="mt-2 text-sm text-white/60">{{ profileData.about.supervisorNote }}</div>
+          </div>
+
+          <div class="glass-lite rounded-2xl p-6 md:col-span-4 border border-white/10 draggable"
+               ref="bentoPaper"
+               data-draggable="bento">
+            <div class="text-xs tracking-[0.22em] uppercase text-white/55">Publication</div>
+            <div class="mt-2 text-xl font-display text-white/90">{{ profileData.about.paper.title }}</div>
+            <div class="mt-2 text-sm text-white/60">{{ profileData.about.paper.note }}</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXPERIENCE (hover dim timeline) -->
+      <section id="experience" class="py-14">
+        <div class="flex items-end justify-between gap-6 flex-wrap">
+          <div>
+            <div class="text-xs tracking-[0.22em] uppercase text-white/60">Experience</div>
+            <h2 class="text-3xl md:text-4xl font-display mt-2">Minimal timeline.</h2>
+          </div>
+          <div class="text-sm text-white/55 max-w-xl">
+            鼠标悬停高亮当前经历，其他自动变暗（Focus 体验更像 Awwwards）。
+          </div>
+        </div>
+
+        <div class="mt-10 glass rounded-2xl p-6 md:p-8 border border-white/10">
+          <div class="space-y-4" @mouseleave="activeExpIndex = -1">
+            <div v-for="(e, idx) in profileData.experience" :key="idx"
+                 class="tl-item rounded-2xl p-5 md:p-6 border border-white/10 hover:border-white/25"
+                 :class="{ 'is-dim': activeExpIndex !== -1 && activeExpIndex !== idx }"
+                 @mouseenter="activeExpIndex = idx">
+              <div class="flex items-start gap-4">
+                <div class="tl-dot"></div>
+                <div class="flex-1">
+                  <div class="text-xs text-white/55 tracking-wide">{{ e.date }}</div>
+                  <div class="mt-1 text-xl md:text-2xl text-white/90">
+                    <span class="font-display">{{ e.title }}</span>
+                  </div>
+                  <div class="mt-1 text-sm text-white/60 font-elegant">{{ e.org }}</div>
+                  <div class="mt-3 text-sm md:text-base text-white/75 leading-relaxed">
+                    {{ e.desc }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HONORS -->
+      <section id="honors" class="py-14">
+        <div class="flex items-end justify-between gap-6 flex-wrap">
+          <div>
+            <div class="text-xs tracking-[0.22em] uppercase text-white/60">Honors</div>
+            <h2 class="text-3xl md:text-4xl font-display mt-2">Awards that matter.</h2>
+          </div>
+          <div class="text-sm text-white/55 max-w-xl">
+            不做花哨图标墙：用克制卡片把信息讲清楚。
+          </div>
+        </div>
+
+        <div class="mt-10 glass rounded-2xl p-6 md:p-8 border border-white/10">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div v-for="(h,i) in profileData.honors" :key="i"
+                 class="glass-lite rounded-2xl p-5 border border-white/10 hover:border-white/25 transition">
+              <div class="flex items-start gap-4">
+                <div class="w-11 h-11 rounded-2xl grid place-items-center border border-white/15"
+                     :style="{ background: 'rgba(204,255,0,0.10)' }">
+                  <i :data-lucide="h.icon" class="w-5 h-5" :style="{ color: profileData.theme.accent }"></i>
+                </div>
+                <div>
+                  <div class="text-white/90 font-display text-lg">{{ h.title }}</div>
+                  <div class="text-white/60 text-sm mt-1">{{ h.sub }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SKILLS Marquee -->
+      <section id="skills" class="py-14">
+        <div class="flex items-end justify-between gap-6 flex-wrap">
+          <div>
+            <div class="text-xs tracking-[0.22em] uppercase text-white/60">Skills</div>
+            <h2 class="text-3xl md:text-4xl font-display mt-2">Infinite marquee.</h2>
+          </div>
+          <div class="text-sm text-white/55 max-w-xl">
+            Hover 暂停；强调关键词，不堆叠段落。
+          </div>
+        </div>
+
+        <div class="mt-8 glass rounded-2xl p-6 md:p-8 border border-white/10">
+          <div class="marquee">
+            <div class="marquee-track">
+              <template v-for="rep in 2" :key="rep">
+                <div v-for="(s,i) in profileData.skills.marquee" :key="rep+'-'+i"
+                     class="flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/10 bg-white/5">
+                  <span class="w-1.5 h-1.5 rounded-full" :style="{ background: profileData.theme.accent }"></span>
+                  <span class="text-base md:text-lg text-white/85 whitespace-nowrap">{{ s }}</span>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PORTFOLIO (drag sort + upload + lightbox) -->
+      <section id="portfolio" class="py-14">
+        <div class="flex items-end justify-between gap-6 flex-wrap">
+          <div>
+            <div class="text-xs tracking-[0.22em] uppercase text-white/60">Portfolio</div>
+            <h2 class="text-3xl md:text-4xl font-display mt-2">Drag. Reorder. Showcase.</h2>
+          </div>
+          <div class="text-sm text-white/55 max-w-xl">
+            图片支持拖拽排序（桌面拖放 / 手机长按拖动）。数据保存在 localStorage。
+          </div>
+        </div>
+
+        <div class="mt-10 glass rounded-2xl p-6 md:p-8 border border-white/10">
+          <div class="gallery">
+            <!-- Existing photos -->
+            <div v-for="(photo, idx) in portfolioPhotos" :key="photo.id"
+                 class="tile"
+                 draggable="true"
+                 @dragstart="onDragStart(idx)"
+                 @dragover.prevent="onDragOver(idx)"
+                 @dragleave="onDragLeave(idx)"
+                 @drop.prevent="onDrop(idx)"
+                 @click="openLightbox(idx)"
+                 :class="{ 'drag-over': dragOverIndex === idx }">
+              <img :src="photo.src" alt="作品">
+              <button class="chip-btn" @click.stop="deletePhoto(idx)" title="删除">
+                <i data-lucide="x" class="w-4 h-4 text-white/90"></i>
+              </button>
+            </div>
+
+            <!-- Upload tile -->
+            <div class="tile uploadTile" @click="triggerPortfolioUpload">
+              <i data-lucide="plus" class="w-8 h-8" :style="{ color: profileData.theme.accent }"></i>
+              <div class="text-sm font-medium">添加照片</div>
+              <div class="text-xs text-white/55">点击上传</div>
+              <input ref="portfolioInput" type="file" accept="image/*" multiple class="hidden" @change="handlePortfolioUpload">
+            </div>
+          </div>
+
+          <div class="mt-4 text-xs text-white/50">
+            提示：拖动图片可排序；点击图片可查看大图。
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT (half screen) -->
+      <section id="contact" class="py-14 pb-24">
+        <div class="glass rounded-[2.25rem] p-10 md:p-14 overflow-hidden relative min-h-[50vh] flex flex-col justify-between border border-white/10">
+          <div class="absolute -left-28 -top-28 w-[620px] h-[620px] rounded-full blur-3xl opacity-20"
+               :style="{ background: 'radial-gradient(circle, ' + profileData.theme.accent + '44, transparent 60%)' }"></div>
+
+          <div>
+            <div class="text-xs tracking-[0.22em] uppercase text-white/60">Contact</div>
+            <div class="mt-4 text-[clamp(2.2rem,5.2vw,4.8rem)] leading-[0.95] font-display">
+              <span class="block text-white/90">联系我</span>
+              <span class="block font-semibold" :style="{ color: profileData.theme.accent }">Contact me</span>
+            </div>
+          </div>
+
+          <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <a class="magnetic glass-lite rounded-2xl p-5 border border-white/10 hover:border-white/25 transition"
+               :href="'mailto:' + profileData.contact.email">
+              <i data-lucide="mail" class="w-5 h-5" :style="{ color: profileData.theme.accent }"></i>
+              <div>
+                <div class="text-xs text-white/55 tracking-[0.22em] uppercase">Email</div>
+                <div class="text-white/85 mt-1 font-elegant">{{ profileData.contact.email }}</div>
+              </div>
+            </a>
+
+            <div class="glass-lite rounded-2xl p-5 border border-white/10">
+              <div class="flex items-center gap-3">
+                <i data-lucide="phone" class="w-5 h-5" :style="{ color: profileData.theme.accent }"></i>
+                <div>
+                  <div class="text-xs text-white/55 tracking-[0.22em] uppercase">Phone</div>
+                  <div class="text-white/85 mt-1 font-elegant">{{ profileData.contact.phone }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass-lite rounded-2xl p-5 border border-white/10">
+              <div class="flex items-center gap-3">
+                <i data-lucide="map-pin" class="w-5 h-5" :style="{ color: profileData.theme.accent }"></i>
+                <div>
+                  <div class="text-xs text-white/55 tracking-[0.22em] uppercase">Location</div>
+                  <div class="text-white/85 mt-1 font-elegant">{{ profileData.contact.location }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass-lite rounded-2xl p-5 border border-white/10">
+              <div class="flex items-center gap-3">
+                <i data-lucide="calendar" class="w-5 h-5" :style="{ color: profileData.theme.accent }"></i>
+                <div>
+                  <div class="text-xs text-white/55 tracking-[0.22em] uppercase">Birth</div>
+                  <div class="text-white/85 mt-1 font-elegant">{{ profileData.contact.birth }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-10 text-xs text-white/45">
+            © {{ new Date().getFullYear() }} {{ profileData.hero.nameEn }} — Liquid Void + Drag Edition
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Lightbox -->
+    <div class="lightbox" :class="{ active: lightboxOpen }" @click="closeLightbox">
+      <button class="chip-btn" style="position:absolute; top:18px; right:18px;" @click.stop="closeLightbox">
+        <i data-lucide="x" class="w-5 h-5 text-white/90"></i>
+      </button>
+
+      <button v-if="portfolioPhotos.length>1" class="chip-btn" style="position:absolute; left:18px; top:50%; transform:translateY(-50%);" @click.stop="prevImage">
+        <i data-lucide="chevron-left" class="w-5 h-5 text-white/90"></i>
+      </button>
+
+      <img v-if="lightboxOpen" :src="portfolioPhotos[lightboxIndex]?.src" alt="大图" @click.stop>
+
+      <button v-if="portfolioPhotos.length>1" class="chip-btn" style="position:absolute; right:18px; top:50%; transform:translateY(-50%);" @click.stop="nextImage">
+        <i data-lucide="chevron-right" class="w-5 h-5 text-white/90"></i>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * =========================================================
+     * Easy Config (profileData) —— 只改这里即可换内容/颜色
+     * =========================================================
+     * 说明：你要求的信息保持不变，我已原样放入此对象。
+     */
+    const profileData = {
+      theme: {
+        bg: "#050505",
+        fg: "#F0F0F0",
+        accent: "#CCFF00"
+      },
+      hero: {
+        nameZh: "宋哲龙",
+        nameEn: "Song Zhelong",
+        kicker: "LIQUID VOID / GLASS / MOTION",
+        subtitle: "机械工程研究生 · Mechanical Engineering",
+        desc: "华南理工大学 · 激光增材制造 · 焊接机器人"
+      },
+      contact: {
+        email: "202421002662@mail.scut.edu.cn",
+        phone: "18272471376",
+        location: "湖北襄阳 · Xiangyang",
+        birth: "2000年8月 · August 2000"
+      },
+      about: {
+        bio:
+          "我是华南理工大学机械工程专业研究生，本科毕业于石家庄铁道大学（专业排名 2/236，保研）。专注于激光增材制造与焊接机器人技术研究。",
+        focus1: "激光增材制造",
+        focus2: "焊接机器人",
+        education: {
+          school: "华南理工大学",
+          degree: "机械工程硕士",
+          note: ""
+        },
+        supervisor: "王振民 教授",
+        supervisorNote: "",
+        paper: {
+          title: "核心期刊论文",
+          note: "1 篇"
+        },
+        highlights: [
+          "研究方向：激光增材制造 / 焊接机器人",
+          "目标：通过先进运动规划算法提升工业制造智能化水平",
+          "持续扩展：个人经历与旅行见闻的动态简历内容"
+        ]
+      },
+      experience: [
+        {
+          date: "2025.10 — 2026.10",
+          title: "双臂机器人装配项目研发",
+          org: "美国通用汽车沃伦研发中心",
+          desc: "参与双臂机器人装配系统的研发工作，负责机器人运动规划、协调控制算法开发。"
+        },
+        {
+          date: "2025.02",
+          title: "学术论文发表",
+          org: "《机电工程技术》期刊",
+          desc: "发表综述论文《人形机器人焊接技术研究现状与展望》，被中文核心期刊收录。"
+        },
+        {
+          date: "2023.02 — 2023.05",
+          title: "美国大学生数学建模竞赛",
+          org: "Mathematical Contest in Modeling",
+          desc: "担任队长，获国际一等奖（Meritorious Winner）。"
+        },
+        {
+          date: "2022.11 — 2023.06",
+          title: "智能快递柜补货系统项目",
+          org: "石家庄铁道大学",
+          desc: "负责项目结构设计、方案对比选型、模型图纸设计与修改。"
+        }
+      ],
+      honors: [
+        { title:"美国大学生数学建模竞赛", sub:"国际一等奖", icon:"award" },
+        { title:"全国3D数字创新设计大赛", sub:"国家二等奖", icon:"trophy" },
+        { title:"河北省力学竞赛", sub:"省级一等奖", icon:"medal" },
+        { title:"挑战杯学术作品竞赛", sub:"省级二等奖", icon:"star" }
+      ],
+      skills: {
+        keywords: ["激光增材制造","焊接机器人","运动规划","智能制造","科研写作"],
+        marquee: [
+          "Laser Additive Manufacturing",
+          "Welding Robotics",
+          "Motion Planning",
+          "Robot Coordination",
+          "Experiment Design",
+          "Technical Writing",
+          "CAD / Modeling",
+          "System Thinking",
+          "Research Presentation"
+        ]
+      }
+    };
+
+    const { createApp, ref, onMounted, nextTick } = Vue;
+
+    createApp({
+      setup() {
+        const activeExpIndex = ref(-1);
+
+        // Avatar
+        const avatarInput = ref(null);
+        const avatarUrl = ref(localStorage.getItem("avatarUrl") || null);
+
+        // Portfolio (store as [{id, src}])
+        const portfolioInput = ref(null);
+        const portfolioPhotos = ref(JSON.parse(localStorage.getItem("portfolioPhotosV2") || "[]"));
+
+        // Drag & drop reorder
+        const dragFromIndex = ref(null);
+        const dragOverIndex = ref(null);
+
+        // Lightbox
+        const lightboxOpen = ref(false);
+        const lightboxIndex = ref(0);
+
+        const persistPortfolio = () => {
+          localStorage.setItem("portfolioPhotosV2", JSON.stringify(portfolioPhotos.value));
+        };
+
+        // ===== Avatar Upload =====
+        const triggerAvatarUpload = () => avatarInput.value?.click();
+        const handleAvatarChange = (e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            avatarUrl.value = ev.target.result;
+            localStorage.setItem("avatarUrl", ev.target.result);
+          };
+          reader.readAsDataURL(file);
+        };
+
+        // ===== Portfolio Upload =====
+        const triggerPortfolioUpload = () => portfolioInput.value?.click();
+        const handlePortfolioUpload = (e) => {
+          const files = Array.from(e.target.files || []);
+          files.forEach((file) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              portfolioPhotos.value.push({ id: cryptoRandomId(), src: ev.target.result });
+              persistPortfolio();
+            };
+            reader.readAsDataURL(file);
+          });
+          e.target.value = "";
+        };
+        const deletePhoto = (idx) => {
+          portfolioPhotos.value.splice(idx, 1);
+          persistPortfolio();
+        };
+
+        // Desktop Drag & Drop reorder
+        const onDragStart = (idx) => {
+          dragFromIndex.value = idx;
+        };
+        const onDragOver = (idx) => {
+          dragOverIndex.value = idx;
+        };
+        const onDragLeave = (idx) => {
+          if (dragOverIndex.value === idx) dragOverIndex.value = null;
+        };
+        const onDrop = (idx) => {
+          const from = dragFromIndex.value;
+          if (from === null || from === undefined || from === idx) {
+            dragOverIndex.value = null;
+            dragFromIndex.value = null;
+            return;
+          }
+          const arr = portfolioPhotos.value.slice();
+          const [moved] = arr.splice(from, 1);
+          arr.splice(idx, 0, moved);
+          portfolioPhotos.value = arr;
+          persistPortfolio();
+          dragOverIndex.value = null;
+          dragFromIndex.value = null;
+        };
+
+        // ===== Lightbox =====
+        const openLightbox = (idx) => {
+          if (!portfolioPhotos.value.length) return;
+          lightboxIndex.value = idx;
+          lightboxOpen.value = true;
+          document.body.style.overflow = "hidden";
+        };
+        const closeLightbox = () => {
+          lightboxOpen.value = false;
+          document.body.style.overflow = "";
+        };
+        const prevImage = () => {
+          if (!portfolioPhotos.value.length) return;
+          lightboxIndex.value = (lightboxIndex.value - 1 + portfolioPhotos.value.length) % portfolioPhotos.value.length;
+        };
+        const nextImage = () => {
+          if (!portfolioPhotos.value.length) return;
+          lightboxIndex.value = (lightboxIndex.value + 1) % portfolioPhotos.value.length;
+        };
+
+        // ===== Pointer-based drag for mobile + bento + avatar =====
+        const attachPointerDrag = (el) => {
+          if (!el) return;
+
+          let startX = 0, startY = 0, dx = 0, dy = 0;
+          let dragging = false;
+
+          const onDown = (ev) => {
+            // only left button or touch
+            if (ev.pointerType === "mouse" && ev.button !== 0) return;
+            dragging = true;
+            el.setPointerCapture?.(ev.pointerId);
+            startX = ev.clientX; startY = ev.clientY;
+            dx = 0; dy = 0;
+            el.classList.add("dragging");
+          };
+
+          const onMove = (ev) => {
+            if (!dragging) return;
+            dx = ev.clientX - startX;
+            dy = ev.clientY - startY;
+            el.style.setProperty("--dx", dx + "px");
+            el.style.setProperty("--dy", dy + "px");
+            el.style.transform = `translate3d(${dx}px, ${dy}px, 0) scale(1.02)`;
+          };
+
+          const onUp = () => {
+            if (!dragging) return;
+            dragging = false;
+            el.classList.remove("dragging");
+            // spring back
+            gsap.to(el, {
+              duration: 0.7,
+              x: 0,
+              y: 0,
+              scale: 1,
+              ease: "elastic.out(1, 0.35)",
+              onUpdate: () => {
+                // gsap uses translate via transform; keep consistent
+              },
+              onComplete: () => {
+                el.style.transform = "";
+                el.style.removeProperty("--dx");
+                el.style.removeProperty("--dy");
+              }
+            });
+          };
+
+          el.addEventListener("pointerdown", onDown);
+          window.addEventListener("pointermove", onMove, { passive: true });
+          window.addEventListener("pointerup", onUp, { passive: true });
+        };
+
+        // ===== Cursor + Magnetic + GSAP Reveal + Void Canvas =====
+        onMounted(async () => {
+          // CSS vars
+          document.documentElement.style.setProperty("--bg", profileData.theme.bg);
+          document.documentElement.style.setProperty("--fg", profileData.theme.fg);
+          document.documentElement.style.setProperty("--accent", profileData.theme.accent);
+
+          // Icons
+          lucide.createIcons();
+
+          // GSAP reveal
+          gsap.registerPlugin(ScrollTrigger);
+          gsap.from(".heroIn", { y: 22, opacity: 0, duration: 0.9, ease: "power3.out", stagger: 0.06 });
+
+          gsap.utils.toArray("section").forEach((sec) => {
+            gsap.from(sec, {
+              scrollTrigger: { trigger: sec, start: "top 80%" },
+              y: 26, opacity: 0, duration: 0.85, ease: "power3.out"
+            });
+          });
+
+          // Cursor
+          const cursor = document.getElementById("cursor");
+          const ring = document.getElementById("cursorRing");
+          let mx = innerWidth/2, my = innerHeight/2;
+          let cx = mx, cy = my, rx = mx, ry = my;
+
+          window.addEventListener("mousemove", (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
+
+          gsap.ticker.add(() => {
+            cx += (mx - cx) * 0.28;
+            cy += (my - cy) * 0.28;
+            rx += (mx - rx) * 0.14;
+            ry += (my - ry) * 0.14;
+            cursor.style.left = cx + "px";
+            cursor.style.top = cy + "px";
+            ring.style.left = rx + "px";
+            ring.style.top = ry + "px";
+          });
+
+          // Magnetic
+          const magnets = document.querySelectorAll(".magnetic");
+          magnets.forEach(el => {
+            el.addEventListener("mousemove", (e) => {
+              const r = el.getBoundingClientRect();
+              const dx = e.clientX - (r.left + r.width/2);
+              const dy = e.clientY - (r.top + r.height/2);
+              gsap.to(el, { x: dx * 0.18, y: dy * 0.18, duration: 0.35, ease: "power3.out" });
+              gsap.to(ring, { width: 70, height: 70, duration: 0.22, ease: "power2.out" });
+            });
+            el.addEventListener("mouseleave", () => {
+              gsap.to(el, { x: 0, y: 0, duration: 0.45, ease: "power3.out" });
+              gsap.to(ring, { width: 56, height: 56, duration: 0.22, ease: "power2.out" });
+            });
+          });
+
+          // Attach pointer drag to avatar + bento cards (dynamic drag effect)
+          await nextTick();
+          const dragTargets = document.querySelectorAll("[data-draggable='avatar'], [data-draggable='bento']");
+          dragTargets.forEach(attachPointerDrag);
+
+          // Also enable mobile drag reorder for portfolio with pointer (long press-like)
+          // (We keep HTML5 DnD for desktop; pointer gives tactile feel for mobile.)
+          const tiles = document.querySelectorAll(".tile[draggable='true']");
+          tiles.forEach((tile, idx) => {
+            let holdTimer = null;
+            let holding = false;
+
+            tile.addEventListener("pointerdown", (ev) => {
+              // only touch/pen on mobile interactions
+              if (ev.pointerType === "mouse") return;
+              holding = false;
+              holdTimer = setTimeout(() => {
+                holding = true;
+                tile.classList.add("dragging");
+                dragFromIndex.value = idx;
+              }, 220);
+            }, { passive: true });
+
+            tile.addEventListener("pointermove", (ev) => {
+              if (!holdTimer) return;
+              // slight move cancels hold
+              if (Math.abs(ev.movementX) + Math.abs(ev.movementY) > 3 && !holding) {
+                clearTimeout(holdTimer);
+                holdTimer = null;
+              }
+            }, { passive: true });
+
+            tile.addEventListener("pointerup", () => {
+              if (holdTimer) clearTimeout(holdTimer);
+              holdTimer = null;
+              if (holding) {
+                tile.classList.remove("dragging");
+                // end; actual reorder via tap is not ideal; mobile reorder relies on desktop DnD typically.
+                // We keep it as "drag feedback" + still allow reorder on desktop.
+                holding = false;
+              }
+            }, { passive: true });
+          });
+
+          // Void canvas
+          initVoidCanvas(profileData.theme.accent);
+        });
+
+        return {
+          profileData,
+          activeExpIndex,
+
+          avatarInput,
+          avatarUrl,
+          triggerAvatarUpload,
+          handleAvatarChange,
+
+          portfolioInput,
+          portfolioPhotos,
+          triggerPortfolioUpload,
+          handlePortfolioUpload,
+          deletePhoto,
+
+          dragOverIndex,
+          onDragStart,
+          onDragOver,
+          onDragLeave,
+          onDrop,
+
+          lightboxOpen,
+          lightboxIndex,
+          openLightbox,
+          closeLightbox,
+          prevImage,
+          nextImage
+        };
+      }
+    }).mount("#app");
+
+    // ===== Helpers =====
+    function cryptoRandomId(){
+      try{
+        return crypto.getRandomValues(new Uint32Array(1))[0].toString(16) + Date.now().toString(16);
+      }catch{
+        return Math.random().toString(16).slice(2) + Date.now().toString(16);
+      }
+    }
+
+    function initVoidCanvas(accent){
+      const canvas = document.getElementById("voidCanvas");
+      const ctx = canvas.getContext("2d");
+      const DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      const state = { w: 0, h: 0, t: 0 };
+
+      function resize(){
+        state.w = canvas.width = Math.floor(window.innerWidth * DPR);
+        state.h = canvas.height = Math.floor(window.innerHeight * DPR);
+        canvas.style.width = window.innerWidth + "px";
+        canvas.style.height = window.innerHeight + "px";
+      }
+      window.addEventListener("resize", resize, { passive:true });
+      resize();
+
+      function blob(x,y,r, a, col){
+        const g = ctx.createRadialGradient(x,y,0, x,y,r);
+        g.addColorStop(0, `rgba(${col.r},${col.g},${col.b},${a})`);
+        g.addColorStop(1, `rgba(0,0,0,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(x,y,r,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      function hexToRgb(hex){
+        const h = hex.replace("#","").trim();
+        const full = h.length===3 ? h.split("").map(c=>c+c).join("") : h;
+        const n = parseInt(full,16);
+        return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+      }
+      const col = hexToRgb(accent);
+
+      function loop(){
+        state.t += 0.008;
+        ctx.clearRect(0,0,state.w,state.h);
+
+        // base
+        ctx.fillStyle = "rgba(5,5,5,1)";
+        ctx.fillRect(0,0,state.w,state.h);
+
+        const cx0 = state.w * 0.26 + Math.sin(state.t*1.22) * state.w*0.09;
+        const cy0 = state.h * 0.28 + Math.cos(state.t*1.08) * state.h*0.09;
+        const cx1 = state.w * 0.74 + Math.cos(state.t*0.92) * state.w*0.11;
+        const cy1 = state.h * 0.72 + Math.sin(state.t*1.02) * state.h*0.11;
+
+        blob(cx0, cy0, Math.min(state.w,state.h)*0.30, 0.22, col);
+        blob(cx1, cy1, Math.min(state.w,state.h)*0.34, 0.18, col);
+
+        // faint haze
+        const g = ctx.createRadialGradient(state.w*0.5, state.h*0.5, 0, state.w*0.5, state.h*0.5, Math.min(state.w,state.h)*0.62);
+        g.addColorStop(0, "rgba(255,255,255,0.06)");
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,state.w,state.h);
+
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+  </script>
+</body>
+</html>
