@@ -1109,11 +1109,11 @@
           <div class="fp-stat-label">Countries</div>
         </div>
         <div class="fp-stat">
-          <div class="fp-stat-num">10</div>
+          <div class="fp-stat-num">12</div>
           <div class="fp-stat-label">Provinces</div>
         </div>
         <div class="fp-stat">
-          <div class="fp-stat-num">19</div>
+          <div class="fp-stat-num">21</div>
           <div class="fp-stat-label">Cities</div>
         </div>
       </div>
@@ -1195,9 +1195,21 @@
           <div class="fp-country-header">
             <img src="https://flagcdn.com/20x15/us.png" alt="US" />
             <span class="fp-country-name">United States of America</span>
-            <span class="fp-country-count">3 cities</span>
+            <span class="fp-country-count">5 cities</span>
           </div>
           <div class="fp-province-grid">
+            <div class="fp-province-card">
+              <div class="fp-province-name">Illinois</div>
+              <div class="fp-cities">
+                <button class="fp-city-btn" onclick="showCity('chicago')">Chicago</button>
+              </div>
+            </div>
+            <div class="fp-province-card">
+              <div class="fp-province-name">Indiana</div>
+              <div class="fp-cities">
+                <button class="fp-city-btn" onclick="showCity('indiana')">Indiana</button>
+              </div>
+            </div>
             <div class="fp-province-card">
               <div class="fp-province-name">Michigan</div>
               <div class="fp-cities">
@@ -1293,13 +1305,25 @@
         <img src="images/footprints/shanghai-1.jpg" alt="Shanghai" />
         <img src="images/footprints/shanghai-2.jpg" alt="Shanghai" />
       </div>
+      <div class="fp-gallery" id="gallery-chicago">
+        <img src="images/footprints/chicago-1.jpg" alt="Chicago" />
+        <img src="images/footprints/chicago-2.jpg" alt="Chicago" />
+        <img src="images/footprints/chicago-3.jpg" alt="Chicago" />
+        <img src="images/footprints/chicago-4.jpg" alt="Chicago" />
+      </div>
+      <div class="fp-gallery" id="gallery-indiana">
+        <img src="images/footprints/indiana-1.jpg" alt="Indiana" />
+      </div>
       <div class="fp-gallery" id="gallery-detroit">
         <img src="images/footprints/detroit-1.jpg" alt="Detroit" />
         <img src="images/footprints/detroit-2.jpg" alt="Detroit" />
+        <img src="images/footprints/detroit-3.jpg" alt="Detroit" />
       </div>
       <div class="fp-gallery" id="gallery-orlando">
         <img src="images/footprints/orlando-1.jpg" alt="Orlando" />
         <img src="images/footprints/orlando-2.jpg" alt="Orlando" />
+        <img src="images/footprints/orlando-3.jpg" alt="Orlando" />
+        <img src="images/footprints/orlando-4.jpg" alt="Orlando" />
       </div>
       <div class="fp-gallery" id="gallery-newyork">
         <img src="images/footprints/newyork-1.jpg" alt="New York" />
@@ -1309,7 +1333,7 @@
 
     <!-- Footer -->
     <footer class="footer">
-      © 2026 Zhelong Song. Last updated: March 2026.
+      © 2026 Zhelong Song. Last updated: May 2026.
     </footer>
   </div>
   </div>
@@ -1412,6 +1436,8 @@
         { name: 'Guangzhou', key: 'guangzhou', lat: 23.1291, lng: 113.2644 },
         { name: 'Shenzhen', key: 'shenzhen', lat: 22.5431, lng: 114.0579 },
         { name: 'Shanghai', key: 'shanghai', lat: 31.2304, lng: 121.4737 },
+        { name: 'Chicago', key: 'chicago', lat: 41.8781, lng: -87.6298 },
+        { name: 'Indiana', key: 'indiana', lat: 39.7684, lng: -86.1581 },
         { name: 'Detroit', key: 'detroit', lat: 42.3314, lng: -83.0458 },
         { name: 'Orlando', key: 'orlando', lat: 28.5383, lng: -81.3792 },
         { name: 'New York', key: 'newyork', lat: 40.7128, lng: -74.0060 }
