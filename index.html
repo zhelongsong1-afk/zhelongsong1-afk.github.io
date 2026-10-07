@@ -455,7 +455,7 @@
     /* ===== Research Highlights ===== */
     .research-gallery {
       display: grid;
-      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
       gap: 1.5rem;
       align-items: start;
     }
@@ -476,6 +476,13 @@
       color: var(--text);
     }
     .research-demo-portrait { grid-column: 2; grid-row: 1 / span 2; }
+    .research-demo-disturbance { grid-column: 3; }
+    @media (min-width: 641px) and (max-width: 900px) {
+      .research-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .research-demo:not(.research-demo-portrait) { grid-column: 1 / -1; }
+      .research-demo-portrait { grid-column: auto; grid-row: auto; }
+      .research-demo-portrait img { max-width: 270px; margin: 0 auto; }
+    }
     @media (max-width: 640px) {
       .research-gallery { grid-template-columns: minmax(0, 1fr); }
       .research-demo-portrait { grid-column: auto; grid-row: auto; }
@@ -1069,6 +1076,13 @@
             <img src="images/research/alignment.gif" alt="Robotic alignment demonstration" width="270" height="442" loading="lazy" decoding="async" />
           </picture>
           <figcaption>Alignment</figcaption>
+        </figure>
+        <figure class="research-demo research-demo-portrait research-demo-disturbance">
+          <picture>
+            <source media="(prefers-reduced-motion: reduce)" srcset="images/research/external-disturbance.jpg" />
+            <img src="images/research/external-disturbance.gif" alt="Robotic manipulation under external disturbance" width="240" height="427" loading="lazy" decoding="async" />
+          </picture>
+          <figcaption>External Disturbance</figcaption>
         </figure>
       </div>
 
