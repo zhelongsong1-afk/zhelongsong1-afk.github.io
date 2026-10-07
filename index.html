@@ -482,6 +482,20 @@
       object-fit: cover;
     }
     .research-demo-disturbance { grid-column: 3; }
+    .research-note {
+      grid-column: 2 / -1;
+      grid-row: 2;
+      align-self: end;
+      margin: 0;
+      padding-top: 1rem;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+    @media (max-width: 900px) {
+      .research-note { grid-column: 1 / -1; grid-row: auto; padding-top: 0; }
+    }
     @media (min-width: 641px) and (max-width: 900px) {
       .research-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .research-demo:not(.research-demo-portrait) { grid-column: 1 / -1; }
@@ -1089,6 +1103,7 @@
           </picture>
           <figcaption>External Disturbance</figcaption>
         </figure>
+        <p class="research-note"><strong>Note:</strong> The calibration boards shown in these demonstrations are used solely to independently evaluate alignment accuracy after the visual servoing algorithm has converged. They are not used in the visual servo control loop.</p>
       </div>
 
 
