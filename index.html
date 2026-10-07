@@ -489,9 +489,20 @@
       margin: 0;
       padding-top: 1rem;
       font-family: Georgia, 'Times New Roman', serif;
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       line-height: 1.6;
       color: var(--text-muted);
+    }
+    .research-note strong { color: #B22222; font-weight: 700; }
+    @media (min-width: 901px) {
+      .research-gallery { padding-bottom: 2rem; }
+      .research-demo-tracking { position: relative; }
+      .research-demo-tracking figcaption {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+      }
     }
     @media (max-width: 900px) {
       .research-note { grid-column: 1 / -1; grid-row: auto; padding-top: 0; }
@@ -1082,7 +1093,7 @@
           </picture>
           <figcaption>Alignment under Grasp Uncertainty</figcaption>
         </figure>
-        <figure class="research-demo">
+        <figure class="research-demo research-demo-tracking">
           <picture>
             <source media="(prefers-reduced-motion: reduce)" srcset="images/research/dynamic-tracking.jpg" />
             <img src="images/research/dynamic-tracking.gif" alt="Robot dynamically tracking a moving workpiece" width="640" height="360" loading="lazy" decoding="async" />
